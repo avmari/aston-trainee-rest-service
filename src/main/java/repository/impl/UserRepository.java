@@ -5,7 +5,8 @@ import entity.Chat;
 import entity.Payment;
 import entity.User;
 import repository.CrudRepository;
-import repository.mapper.ResultSetMapper;
+import repository.mapper.ChatResultSetMapper;
+import repository.mapper.PaymentResultSetMapper;
 import repository.mapper.UserResultSetMapper;
 
 import java.sql.*;
@@ -15,8 +16,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class UserRepository implements CrudRepository<UUID, User> {
-    private static final ResultSetMapper resultSetMapper = UserResultSetMapper.getInstance();
+    private static final UserResultSetMapper userResultSetMapper = UserResultSetMapper.getInstance();
+    private static final ChatResultSetMapper chatResultSetMapper = ChatResultSetMapper.getInstance();
 
+    private static final PaymentResultSetMapper paymentResultSetMapper = PaymentResultSetMapper.getInstance();
     private static final UserRepository INSTANCE = new UserRepository();
 
     private UserRepository() {
@@ -37,7 +40,7 @@ public class UserRepository implements CrudRepository<UUID, User> {
 
             User user = null;
             if (resultSet.next())
-                user = (User) resultSetMapper.map(resultSet);
+                user = userResultSetMapper.map(resultSet);
             return Optional.ofNullable(user);
 
         } catch (SQLException e) {
@@ -64,7 +67,7 @@ public class UserRepository implements CrudRepository<UUID, User> {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<User> users = new ArrayList<>();
             while (resultSet.next()) {
-                users.add((User) resultSetMapper.map(resultSet));
+                users.add(userResultSetMapper.map(resultSet));
             }
             return users;
         } catch (SQLException e) {
@@ -84,7 +87,9 @@ public class UserRepository implements CrudRepository<UUID, User> {
             preparedStatement.executeUpdate();
 
             var generatedKeys = preparedStatement.getGeneratedKeys();
-            user.setId((UUID) generatedKeys.getObject("id"));
+            if (generatedKeys.next()) {
+                user.setId((UUID) generatedKeys.getObject("id"));
+            }
             return user;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -100,7 +105,7 @@ public class UserRepository implements CrudRepository<UUID, User> {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<Chat> chats = new ArrayList<>();
             while (resultSet.next()) {
-                chats.add((Chat) resultSetMapper.map(resultSet));
+                chats.add(chatResultSetMapper.map(resultSet));
             }
             return chats;
         } catch (SQLException e) {
@@ -117,7 +122,7 @@ public class UserRepository implements CrudRepository<UUID, User> {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<Payment> payments = new ArrayList<>();
             while (resultSet.next()) {
-                payments.add((Payment) resultSetMapper.map(resultSet));
+                payments.add(paymentResultSetMapper.map(resultSet));
             }
             return payments;
         } catch (SQLException e) {

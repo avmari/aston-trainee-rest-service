@@ -15,6 +15,14 @@ public class User extends Entity {
 
     private List<Payment> payments = new ArrayList<>();
 
+    public User(String username, String firstName, String lastName) {
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public User() {
+    }
 
     public void setUsername(String username) {
         this.username = username;

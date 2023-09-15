@@ -1,5 +1,6 @@
 package service.impl;
 
+import entity.Chat;
 import entity.User;
 import repository.impl.UserRepository;
 import service.Service;
@@ -29,11 +30,15 @@ public class UserService implements Service<User> {
         return userRepository.findById(id);
     }
 
+    @Override
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
+    @Override
     public boolean deleteById(UUID id) {
         return userRepository.deleteById(id);
     }
+
+    public List<Chat> getUserChatsById(UUID id) { return userRepository.getUserChatsById(id); }
 }
