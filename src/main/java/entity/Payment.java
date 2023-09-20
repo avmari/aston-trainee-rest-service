@@ -7,6 +7,13 @@ public class Payment extends Entity {
 
     private User user;
 
+    public Payment(Integer amount, User user) {
+        this.amount = amount;
+        this.user = user;
+    }
+
+    public Payment() {}
+
     public void setAmount(Integer amount) {
         this.amount = amount;
     }

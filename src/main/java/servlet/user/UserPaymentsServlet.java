@@ -6,26 +6,25 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.impl.UserService;
-import servlet.dto.ChatDto;
-import servlet.mapper.ChatDtoMapper;
+import servlet.dto.OutgoingPaymentDto;
+import servlet.mapper.PaymentDtoMapper;
 import util.ServletUtil;
 
 import java.util.List;
 import java.util.UUID;
 
-@WebServlet("/userChats")
-public class UserChatsServlet extends HttpServlet {
+@WebServlet("/userPayments")
+public class UserPaymentsServlet extends HttpServlet {
 
     private final UserService userService = UserService.getInstance();
-    private final ChatDtoMapper chatDtoMapper = ChatDtoMapper.getInstance();
+    private final PaymentDtoMapper paymentDtoMapper = PaymentDtoMapper.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         UUID id = UUID.fromString(req.getParameter("id"));
-        List<ChatDto> chats = userService.getUserChatsById(id).stream().map(chatDtoMapper::toDto).toList();
-        String chatsJson = new Gson().toJson(chats);
+        List<OutgoingPaymentDto> payments = userService.getUserPaymentsById(id).stream().map(paymentDtoMapper::toDto).toList();
+        String paymentsJson = new Gson().toJson(payments);
 
-        ServletUtil.writeJsonToResponse(chatsJson, resp);
+        ServletUtil.writeJsonToResponse(paymentsJson, resp);
     }
-
 }

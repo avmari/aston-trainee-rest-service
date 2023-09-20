@@ -6,11 +6,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.impl.UserService;
-import servlet.dto.UserDto;
+import servlet.dto.OutgoingUserDto;
 import servlet.mapper.UserDtoMapper;
+import util.ServletUtil;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
 @WebServlet("/users")
@@ -21,15 +20,9 @@ public class AllUsersServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-        List<UserDto> users = userService.findAll().stream().map(userDtoMapper::toDto).toList();
+        List<OutgoingUserDto> users = userService.findAll().stream().map(userDtoMapper::toDto).toList();
         String usersJson = new Gson().toJson(users);
 
-        try (PrintWriter out = resp.getWriter()) {
-            resp.setContentType("application/json");
-            resp.setCharacterEncoding("UTF-8");
-            out.print(usersJson);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        ServletUtil.writeJsonToResponse(usersJson, resp);
     }
 }

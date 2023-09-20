@@ -80,7 +80,9 @@ public class ChatRepository implements CrudRepository<UUID, Chat> {
             preparedStatement.executeUpdate();
 
             var generatedKeys = preparedStatement.getGeneratedKeys();
-            chat.setId((UUID) generatedKeys.getObject("id"));
+            if (generatedKeys.next()) {
+                chat.setId((UUID) generatedKeys.getObject("id"));
+            }
             return chat;
         } catch (SQLException e) {
             throw new RuntimeException(e);

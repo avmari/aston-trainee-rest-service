@@ -9,11 +9,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.impl.UserService;
-import servlet.dto.UserDto;
+import servlet.dto.IncomingUserDto;
 import servlet.mapper.UserDtoMapper;
+import util.ServletUtil;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.Set;
 
 @WebServlet("/user")
 public class UserServlet extends HttpServlet {
@@ -25,18 +26,16 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         JsonObject jsonData = new Gson().fromJson(req.getReader(), JsonObject.class);
-        UserDto userDto = new UserDto(jsonData.get("username").getAsString(),
-                jsonData.get("firstName").getAsString(),
-                jsonData.get("lastName").getAsString());
+        Set<String> jsonKeys = jsonData.keySet();
 
-        User user = userService.save(userDtoMapper.toUser(userDto));
+        IncomingUserDto userDto = new IncomingUserDto(jsonData.get("username").getAsString());
+        if (jsonKeys.contains("firstName"))
+            userDto.setFirstName(jsonData.get("firstName").getAsString());
+        if (jsonKeys.contains("lastName"))
+            userDto.setFirstName(jsonData.get("lastName").getAsString());
 
-        try (PrintWriter out = resp.getWriter()) {
-            resp.setContentType("application/json");
-            resp.setCharacterEncoding("UTF-8");
-            out.print(new Gson().toJson(userDtoMapper.toDto(user)));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        User user = userService.save(userDtoMapper.toEntity(userDto));
+
+        ServletUtil.writeJsonToResponse(new Gson().toJson(userDtoMapper.toDto(user)), resp);
     }
 }

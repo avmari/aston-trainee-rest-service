@@ -1,7 +1,8 @@
 package servlet.mapper;
 
 import entity.User;
-import servlet.dto.UserDto;
+import servlet.dto.IncomingUserDto;
+import servlet.dto.OutgoingUserDto;
 
 public class UserDtoMapper {
 
@@ -13,11 +14,11 @@ public class UserDtoMapper {
         return INSTANCE;
     }
 
-    public UserDto toDto(User user) {
-        return new UserDto(user.getUsername(), user.getFirstName(), user.getLastName());
+    public OutgoingUserDto toDto(User user) {
+        return new OutgoingUserDto(user.getUsername(), user.getFirstName(), user.getLastName());
     }
 
-    public User toUser(UserDto userDto) {
-        return new User(userDto.username(), userDto.firstName(), userDto.lastName());
+    public User toEntity(IncomingUserDto incomingUserDto) {
+        return new User(incomingUserDto.getUsername(), incomingUserDto.getFirstName(), incomingUserDto.getLastName());
     }
 }

@@ -17,4 +17,10 @@ public class ChatDtoMapper {
     public ChatDto toDto(Chat chat) {
         return new ChatDto(chat.getName());
     }
+
+    public Chat toEntity(ChatDto chatDto) {
+        Chat chat = new Chat();
+        chat.setName(chatDto.name());
+        return chat;
+    }
 }
