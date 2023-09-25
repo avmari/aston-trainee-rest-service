@@ -2,7 +2,8 @@ package servlet.mapper;
 
 
 import entity.Chat;
-import servlet.dto.ChatDto;
+import servlet.dto.IncomingChatDto;
+import servlet.dto.OutgoingChatDto;
 
 public class ChatDtoMapper {
 
@@ -14,13 +15,14 @@ public class ChatDtoMapper {
         return INSTANCE;
     }
 
-    public ChatDto toDto(Chat chat) {
-        return new ChatDto(chat.getName());
+    public OutgoingChatDto toDto(Chat chat) {
+        return new OutgoingChatDto(chat.getName());
     }
 
-    public Chat toEntity(ChatDto chatDto) {
+    public Chat toEntity(IncomingChatDto chatDto) {
         Chat chat = new Chat();
-        chat.setName(chatDto.name());
+        chat.setId(chatDto.getId());
+        chat.setName(chatDto.getName());
         return chat;
     }
 }

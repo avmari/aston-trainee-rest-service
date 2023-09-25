@@ -11,5 +11,7 @@ public interface CrudRepository <K, E> {
 
     List<E> findAll();
 
-    E save(E t);
+    E save(E e);
+
+    void update(E e);
 }

@@ -20,7 +20,6 @@ public class ChatResultSetMapper implements ResultSetMapper {
         Chat chat = new Chat();
         chat.setId((UUID) resultSet.getObject("id"));
         chat.setName(resultSet.getString("name"));
-//        chat.
         return chat;
     }
 }

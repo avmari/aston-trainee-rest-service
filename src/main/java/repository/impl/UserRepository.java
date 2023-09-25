@@ -33,7 +33,7 @@ public class UserRepository implements CrudRepository<UUID, User> {
     public Optional<User> findById(UUID id) {
         try {
             Connection connection = ConnectionManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT FROM users " +
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM users " +
                     "WHERE id=?");
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -96,6 +96,30 @@ public class UserRepository implements CrudRepository<UUID, User> {
         }
     }
 
+    @Override
+    public void update(User user) {
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(getUpdateSql(user))) {
+            preparedStatement.setObject(1, user.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void saveUserChat(UUID userId, UUID chatId) {
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO user_chat " +
+                     "(user_id, chat_id) " +
+                     "VALUES(?,?)")) {
+            preparedStatement.setObject(1, userId);
+            preparedStatement.setObject(2, chatId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public List<Chat> getUserChatsById(UUID id) {
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, name FROM chat " +
@@ -115,7 +139,7 @@ public class UserRepository implements CrudRepository<UUID, User> {
 
     public List<Payment> getUserPaymentsById(UUID id) {
         try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, amount FROM " +
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " +
                      "payment " +
                      "WHERE user_id=?")) {
             preparedStatement.setObject(1, id);
@@ -130,4 +154,44 @@ public class UserRepository implements CrudRepository<UUID, User> {
         }
     }
 
+
+    private String getUpdateSql(User user) {
+        StringBuilder sql = new StringBuilder(260);
+        sql.append("UPDATE users SET");
+        if (user.getUsername() != null) {
+            sql.append(" username='");
+            sql.append(user.getUsername());
+            sql.append("'");
+
+            if (user.getFirstName() != null) {
+                sql.append(", first_name='");
+                sql.append(user.getFirstName());
+                sql.append("'");
+            }
+            if (user.getLastName() != null) {
+                sql.append(", last_name='");
+                sql.append(user.getLastName());
+                sql.append("'");
+            }
+        }
+        else if (user.getFirstName() != null) {
+            sql.append(" first_name='");
+            sql.append(user.getFirstName());
+            sql.append("'");
+
+            if (user.getLastName() != null) {
+                sql.append(", last_name='");
+                sql.append(user.getLastName());
+                sql.append("'");
+            }
+        }
+        else if (user.getLastName() != null) {
+            sql.append(" last_name='");
+            sql.append(user.getLastName());
+            sql.append("'");
+        }
+        sql.append(" WHERE id=?");
+
+        return sql.toString();
+    }
 }

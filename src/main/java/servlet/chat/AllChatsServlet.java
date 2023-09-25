@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.impl.ChatService;
-import servlet.dto.ChatDto;
+import servlet.dto.OutgoingChatDto;
 import servlet.mapper.ChatDtoMapper;
 import util.ServletUtil;
 
@@ -20,7 +20,7 @@ public class AllChatsServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-        List<ChatDto> chats = chatService.findAll().stream().map(chatDtoMapper::toDto).toList();
+        List<OutgoingChatDto> chats = chatService.findAll().stream().map(chatDtoMapper::toDto).toList();
         String chatsJson = new Gson().toJson(chats);
 
         ServletUtil.writeJsonToResponse(chatsJson, resp);

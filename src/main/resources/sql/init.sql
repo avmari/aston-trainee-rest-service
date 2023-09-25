@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS payment
 (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY ,
     amount INT NOT NULL ,
-    user_id uuid NOT NULL REFERENCES users (id)
+    user_id uuid NOT NULL REFERENCES users (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS chat
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS chat
 CREATE TABLE IF NOT EXISTS user_chat
 (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY ,
-    user_id uuid NOT NULL REFERENCES users (id),
-    chat_id uuid NOT NULL REFERENCES chat (id),
+    user_id uuid NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    chat_id uuid NOT NULL REFERENCES chat (id) ON DELETE CASCADE,
     UNIQUE (user_id, chat_id)
 );

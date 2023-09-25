@@ -20,8 +20,14 @@ public class PaymentDtoMapper {
     }
 
     public Payment toEntity(IncomingPaymentDto paymentDto) {
+        Payment payment = new Payment();
+        payment.setId(paymentDto.getId());
+        payment.setAmount(paymentDto.getAmount());
+
         User user = new User();
-        user.setId(paymentDto.userId());
-        return new Payment(paymentDto.amount(), user);
+        user.setId(paymentDto.getUserId());
+        payment.setUser(user);
+
+        return payment;
     }
 }

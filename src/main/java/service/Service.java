@@ -15,4 +15,6 @@ public interface Service <E extends Entity>{
     List<E> findAll();
 
     boolean deleteById(UUID id);
+
+    void update(E e);
 }

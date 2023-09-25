@@ -19,6 +19,11 @@ public class UserDtoMapper {
     }
 
     public User toEntity(IncomingUserDto incomingUserDto) {
-        return new User(incomingUserDto.getUsername(), incomingUserDto.getFirstName(), incomingUserDto.getLastName());
+        User user = new User();
+        user.setId(incomingUserDto.getId());
+        user.setUsername(incomingUserDto.getUsername());
+        user.setFirstName(incomingUserDto.getFirstName());
+        user.setLastName(incomingUserDto.getLastName());
+        return user;
     }
 }

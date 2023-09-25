@@ -3,13 +3,12 @@ package servlet.chat;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import entity.Chat;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.impl.ChatService;
-import servlet.dto.ChatDto;
+import servlet.dto.IncomingChatDto;
 import servlet.mapper.ChatDtoMapper;
 import util.ServletUtil;
 
@@ -33,14 +32,33 @@ public class ChatServlet extends HttpServlet {
             ServletUtil.writeJsonToResponse(chatJson, resp);
         }
     }
-
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         JsonObject jsonData = new Gson().fromJson(req.getReader(), JsonObject.class);
-        ChatDto chatDto = new ChatDto(jsonData.get("name").getAsString());
+        IncomingChatDto chatDto = new IncomingChatDto();
+        chatDto.setName(jsonData.get("name").getAsString());
 
         Chat chat = chatService.save(chatDtoMapper.toEntity(chatDto));
 
         ServletUtil.writeJsonToResponse(new Gson().toJson(chatDtoMapper.toDto(chat)), resp);
+    }
+
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        JsonObject jsonData = new Gson().fromJson(req.getReader(), JsonObject.class);
+
+        IncomingChatDto chatDto = new IncomingChatDto();
+        chatDto.setId(UUID.fromString(jsonData.get("id").getAsString()));
+        chatDto.setName(jsonData.get("name").getAsString());
+
+        chatService.update(chatDtoMapper.toEntity(chatDto));
+    }
+
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
+        UUID id = UUID.fromString(req.getParameter("id"));
+        Optional<Chat> chat = chatService.findById(id);
+
+        if (chat.isPresent()) {
+            chatService.deleteById(id);
+        }
     }
 }

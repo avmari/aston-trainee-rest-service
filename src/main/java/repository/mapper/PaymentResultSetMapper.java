@@ -21,9 +21,14 @@ public class PaymentResultSetMapper implements ResultSetMapper {
         Payment payment = new Payment();
         payment.setId((UUID) resultSet.getObject("id"));
         payment.setAmount(resultSet.getInt("amount"));
-        payment.setUser(new User(resultSet.getString("username"),
-                resultSet.getString("first_name"),
-                resultSet.getString("last_name")));
+
+        User user = new User();
+        user.setId(UUID.fromString(resultSet.getString("user_id")));
+//        user.setUsername(resultSet.getString("username"));
+//        user.setFirstName(resultSet.getString("first_name"));
+//        user.setLastName(resultSet.getString("last_name"));
+        payment.setUser(user);
+
         return payment;
     }
 }

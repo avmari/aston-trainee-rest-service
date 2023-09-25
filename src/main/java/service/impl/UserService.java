@@ -15,7 +15,8 @@ public class UserService implements Service<User> {
     private static final UserRepository userRepository = UserRepository.getInstance();
     private static final UserService INSTANCE = new UserService();
 
-    private UserService() {}
+    private UserService() {
+    }
 
     public static UserService getInstance() {
         return INSTANCE;
@@ -41,7 +42,20 @@ public class UserService implements Service<User> {
         return userRepository.deleteById(id);
     }
 
-    public List<Chat> getUserChatsById(UUID id) { return userRepository.getUserChatsById(id); }
+    @Override
+    public void update(User user) {
+        userRepository.update(user);
+    }
 
-    public List<Payment> getUserPaymentsById(UUID id) { return userRepository.getUserPaymentsById(id); }
+    public void saveUserChat(UUID userId, UUID chatId) {
+        userRepository.saveUserChat(userId, chatId);
+    }
+
+    public List<Chat> getUserChatsById(UUID id) {
+        return userRepository.getUserChatsById(id);
+    }
+
+    public List<Payment> getUserPaymentsById(UUID id) {
+        return userRepository.getUserPaymentsById(id);
+    }
 }

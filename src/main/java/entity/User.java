@@ -2,6 +2,7 @@ package entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class User extends Entity {
 
@@ -62,6 +63,18 @@ public class User extends Entity {
 
     public List<Payment> getPayments() {
         return payments;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(getId(), user.getId()) && Objects.equals(username, user.username) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, firstName, lastName, getId());
     }
 }
 

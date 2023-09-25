@@ -27,8 +27,8 @@ public class PaymentRepository implements CrudRepository<UUID, Payment> {
     public Optional<Payment> findById(UUID id) {
         try {
             Connection connection = ConnectionManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM payment, " +
-                    "users where payment.id=? AND payment.user_id = users.id");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM payment " +
+                    "WHERE id=?");
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -57,8 +57,7 @@ public class PaymentRepository implements CrudRepository<UUID, Payment> {
     @Override
     public List<Payment> findAll() {
         try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM payment p " +
-                     "JOIN users u on u.id=p.user_id")) {
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM payment")) {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<Payment> payments = new ArrayList<>();
             while (resultSet.next()) {
@@ -88,5 +87,40 @@ public class PaymentRepository implements CrudRepository<UUID, Payment> {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void update(Payment payment) {
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(getUpdateSql(payment))) {
+            preparedStatement.setObject(1, payment.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getUpdateSql(Payment payment) {
+        StringBuilder sql = new StringBuilder(90);
+        sql.append("UPDATE payment SET");
+        if (payment.getAmount() != null) {
+            sql.append(" amount='");
+            sql.append(payment.getAmount());
+            sql.append("'");
+
+            if (payment.getUser().getId() != null) {
+                sql.append(", user_id='");
+                sql.append(payment.getUser().getId());
+                sql.append("'");
+            }
+        }
+        else if (payment.getUser().getId() != null) {
+            sql.append(" user_id='");
+            sql.append(payment.getUser().getId());
+            sql.append("'");
+        }
+        sql.append(" WHERE id=?");
+
+        return sql.toString();
     }
 }

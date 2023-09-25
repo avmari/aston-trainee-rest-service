@@ -38,4 +38,9 @@ public class ChatService implements Service<Chat> {
     public boolean deleteById(UUID id) {
         return chatRepository.deleteById(id);
     }
+
+    @Override
+    public void update(Chat chat) {
+
+    }
 }

@@ -1,15 +1,17 @@
 package servlet.dto;
 
+import java.util.UUID;
+
 public class IncomingUserDto {
+
+    private UUID id;
     private String username;
 
     private String firstName;
 
     private String lastName;
 
-    public IncomingUserDto(String username) {
-        this.username = username;
-    }
+    public IncomingUserDto() {}
 
     public void setUsername(String username) {
         this.username = username;
@@ -33,5 +35,13 @@ public class IncomingUserDto {
 
     public String getLastName() {
         return lastName;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 }

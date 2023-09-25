@@ -6,6 +6,7 @@ import entity.User;
 import repository.CrudRepository;
 import repository.mapper.ChatResultSetMapper;
 import repository.mapper.ResultSetMapper;
+import repository.mapper.UserResultSetMapper;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,9 +17,12 @@ import java.util.UUID;
 public class ChatRepository implements CrudRepository<UUID, Chat> {
 
     private static final ChatRepository INSTANCE = new ChatRepository();
-    private static final ResultSetMapper resultSetMapper = ChatResultSetMapper.getInstance();
+    private static final ResultSetMapper chatResultSetMapper = ChatResultSetMapper.getInstance();
 
-    private ChatRepository() {}
+    private static final ResultSetMapper userResultSetMapper = UserResultSetMapper.getInstance();
+
+    private ChatRepository() {
+    }
 
     public static ChatRepository getInstance() {
         return INSTANCE;
@@ -28,14 +32,14 @@ public class ChatRepository implements CrudRepository<UUID, Chat> {
     public Optional<Chat> findById(UUID id) {
         try {
             Connection connection = ConnectionManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT FROM chat " +
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM chat " +
                     "WHERE id=?");
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             Chat chat = null;
             if (resultSet.next())
-                chat = (Chat) resultSetMapper.map(resultSet);
+                chat = (Chat) chatResultSetMapper.map(resultSet);
             return Optional.ofNullable(chat);
 
         } catch (SQLException e) {
@@ -62,7 +66,7 @@ public class ChatRepository implements CrudRepository<UUID, Chat> {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<Chat> chats = new ArrayList<>();
             while (resultSet.next()) {
-                chats.add((Chat) resultSetMapper.map(resultSet));
+                chats.add((Chat) chatResultSetMapper.map(resultSet));
             }
             return chats;
         } catch (SQLException e) {
@@ -89,6 +93,19 @@ public class ChatRepository implements CrudRepository<UUID, Chat> {
         }
     }
 
+    @Override
+    public void update(Chat chat) {
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("UPDATE chat SET " +
+                     "name=? WHERE id=?")) {
+            preparedStatement.setString(1, chat.getName());
+            preparedStatement.setObject(2, chat.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public List<User> getChatUsersById(UUID id) {
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM users WHERE " +
@@ -99,7 +116,7 @@ public class ChatRepository implements CrudRepository<UUID, Chat> {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<User> users = new ArrayList<>();
             while (resultSet.next()) {
-                users.add((User) resultSetMapper.map(resultSet));
+                users.add((User) userResultSetMapper.map(resultSet));
             }
             return users;
         } catch (SQLException e) {

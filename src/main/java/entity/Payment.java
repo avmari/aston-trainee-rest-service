@@ -1,6 +1,8 @@
 package entity;
 
 
+import java.util.Objects;
+
 public class Payment extends Entity {
 
     private Integer amount;
@@ -28,5 +30,17 @@ public class Payment extends Entity {
 
     public User getUser() {
         return user;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Payment payment)) return false;
+        return Objects.equals(getId(), payment.getId()) && Objects.equals(amount, payment.amount) && Objects.equals(user.getId(), payment.user.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), amount, user.getId());
     }
 }

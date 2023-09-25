@@ -38,4 +38,9 @@ public class PaymentService implements Service<Payment> {
     public boolean deleteById(UUID id) {
         return paymentRepository.deleteById(id);
     }
+
+    @Override
+    public void update(Payment payment) {
+
+    }
 }
