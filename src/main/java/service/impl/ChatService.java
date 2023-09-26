@@ -10,13 +10,10 @@ import java.util.UUID;
 
 public class ChatService implements Service<Chat> {
 
-    private static final ChatRepository chatRepository = ChatRepository.getInstance();
-    private static final ChatService INSTANCE = new ChatService();
+    private final ChatRepository chatRepository;
 
-    private ChatService() {}
-
-    public static ChatService getInstance() {
-        return INSTANCE;
+    public ChatService(ChatRepository chatRepository) {
+        this.chatRepository = chatRepository;
     }
 
     @Override
@@ -41,6 +38,6 @@ public class ChatService implements Service<Chat> {
 
     @Override
     public void update(Chat chat) {
-
+        chatRepository.update(chat);
     }
 }

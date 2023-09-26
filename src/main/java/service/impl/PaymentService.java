@@ -10,13 +10,10 @@ import java.util.UUID;
 
 public class PaymentService implements Service<Payment> {
 
-    private static final PaymentRepository paymentRepository = PaymentRepository.getInstance();
-    private static final PaymentService INSTANCE = new PaymentService();
+    private final PaymentRepository paymentRepository;
 
-    private PaymentService() {}
-
-    public static PaymentService getInstance() {
-        return INSTANCE;
+    public PaymentService(PaymentRepository paymentRepository) {
+        this.paymentRepository = paymentRepository;
     }
 
     @Override

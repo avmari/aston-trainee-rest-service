@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import repository.impl.ChatRepository;
 import service.impl.ChatService;
 import servlet.dto.OutgoingChatDto;
 import servlet.mapper.ChatDtoMapper;
@@ -15,7 +16,7 @@ import java.util.List;
 @WebServlet("/chats")
 public class AllChatsServlet extends HttpServlet {
 
-    private final ChatService chatService = ChatService.getInstance();
+    private final ChatService chatService = new ChatService(ChatRepository.getInstance());
     private final ChatDtoMapper chatDtoMapper = ChatDtoMapper.getInstance();
 
     @Override

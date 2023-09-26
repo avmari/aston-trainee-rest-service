@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import repository.impl.UserRepository;
 import service.impl.UserService;
 import servlet.dto.OutgoingChatDto;
 import servlet.mapper.ChatDtoMapper;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @WebServlet("/userChats")
 public class UserChatsServlet extends HttpServlet {
 
-    private final UserService userService = UserService.getInstance();
+    private final UserService userService = new UserService(UserRepository.getInstance());
     private final ChatDtoMapper chatDtoMapper = ChatDtoMapper.getInstance();
 
     @Override

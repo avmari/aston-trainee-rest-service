@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import repository.impl.PaymentRepository;
 import service.impl.PaymentService;
 import servlet.dto.IncomingPaymentDto;
 import servlet.mapper.PaymentDtoMapper;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @WebServlet("/payment")
 public class PaymentServlet extends HttpServlet {
     
-    private final PaymentService paymentService = PaymentService.getInstance();
+    private final PaymentService paymentService = new PaymentService(PaymentRepository.getInstance());
     private final PaymentDtoMapper paymentDtoMapper = PaymentDtoMapper.getInstance();
 
     @Override

@@ -1,12 +1,10 @@
-package repository;
+package repository.impl;
 
 import db.ConnectionManager;
 import entity.Chat;
 import entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import repository.impl.ChatRepository;
-import repository.impl.UserRepository;
 import util.AbstractTest;
 
 import java.sql.Connection;

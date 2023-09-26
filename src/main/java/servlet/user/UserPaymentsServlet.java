@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import repository.impl.UserRepository;
 import service.impl.UserService;
 import servlet.dto.OutgoingPaymentDto;
 import servlet.mapper.PaymentDtoMapper;
@@ -16,7 +17,7 @@ import java.util.UUID;
 @WebServlet("/userPayments")
 public class UserPaymentsServlet extends HttpServlet {
 
-    private final UserService userService = UserService.getInstance();
+    private final UserService userService = new UserService(UserRepository.getInstance());
     private final PaymentDtoMapper paymentDtoMapper = PaymentDtoMapper.getInstance();
 
     @Override

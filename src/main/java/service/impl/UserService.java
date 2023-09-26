@@ -12,14 +12,10 @@ import java.util.UUID;
 
 public class UserService implements Service<User> {
 
-    private static final UserRepository userRepository = UserRepository.getInstance();
-    private static final UserService INSTANCE = new UserService();
+    private final UserRepository userRepository;
 
-    private UserService() {
-    }
-
-    public static UserService getInstance() {
-        return INSTANCE;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
