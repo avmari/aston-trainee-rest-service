@@ -7,9 +7,7 @@ import java.io.PrintWriter;
 
 public final class ServletUtil {
 
-    private ServletUtil() { }
-
-    public static void writeJsonToResponse(String json, HttpServletResponse resp) {
+    public void writeJsonToResponse(String json, HttpServletResponse resp) {
         try (PrintWriter out = resp.getWriter()) {
             resp.setContentType("application/json");
             resp.setCharacterEncoding("UTF-8");

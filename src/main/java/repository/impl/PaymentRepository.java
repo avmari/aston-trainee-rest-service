@@ -27,8 +27,9 @@ public class PaymentRepository implements CrudRepository<UUID, Payment> {
     public Optional<Payment> findById(UUID id) {
         try {
             Connection connection = ConnectionManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM payment " +
-                    "WHERE id=?");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM payment p " +
+                    "JOIN users u on p.user_id = u.id " +
+                    "WHERE p.id=?");
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -57,7 +58,8 @@ public class PaymentRepository implements CrudRepository<UUID, Payment> {
     @Override
     public List<Payment> findAll() {
         try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM payment")) {
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM payment p " +
+                     "JOIN users u on p.user_id = u.id")) {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<Payment> payments = new ArrayList<>();
             while (resultSet.next()) {

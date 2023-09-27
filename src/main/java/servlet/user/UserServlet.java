@@ -23,6 +23,8 @@ public class UserServlet extends HttpServlet {
 
     private final UserService userService = new UserService(UserRepository.getInstance());
     private final UserDtoMapper userDtoMapper = UserDtoMapper.getInstance();
+    private final ServletUtil servletUtil = new ServletUtil();
+
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         UUID id = UUID.fromString(req.getParameter("id"));
@@ -30,7 +32,7 @@ public class UserServlet extends HttpServlet {
 
         if (user.isPresent()) {
             String userJson = new Gson().toJson(userDtoMapper.toDto(user.get()));
-            ServletUtil.writeJsonToResponse(userJson, resp);
+            servletUtil.writeJsonToResponse(userJson, resp);
         }
     }
 
@@ -48,7 +50,7 @@ public class UserServlet extends HttpServlet {
 
         User user = userService.save(userDtoMapper.toEntity(userDto));
 
-        ServletUtil.writeJsonToResponse(new Gson().toJson(userDtoMapper.toDto(user)), resp);
+        servletUtil.writeJsonToResponse(new Gson().toJson(userDtoMapper.toDto(user)), resp);
     }
 
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {

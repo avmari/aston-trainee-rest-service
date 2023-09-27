@@ -18,12 +18,14 @@ public class AllUsersServlet extends HttpServlet {
 
     private final UserService userService = new UserService(UserRepository.getInstance());
     private final UserDtoMapper userDtoMapper = UserDtoMapper.getInstance();
+    private final ServletUtil servletUtil = new ServletUtil();
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         List<OutgoingUserDto> users = userService.findAll().stream().map(userDtoMapper::toDto).toList();
         String usersJson = new Gson().toJson(users);
 
-        ServletUtil.writeJsonToResponse(usersJson, resp);
+        servletUtil.writeJsonToResponse(usersJson, resp);
     }
 }

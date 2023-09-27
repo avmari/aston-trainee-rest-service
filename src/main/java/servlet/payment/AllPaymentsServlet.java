@@ -18,12 +18,14 @@ public class AllPaymentsServlet extends HttpServlet {
 
     private final PaymentService paymentService = new PaymentService(PaymentRepository.getInstance());
     private final PaymentDtoMapper paymentDtoMapper = PaymentDtoMapper.getInstance();
+    private final ServletUtil servletUtil = new ServletUtil();
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         List<OutgoingPaymentDto> payments = paymentService.findAll().stream().map(paymentDtoMapper::toDto).toList();
         String paymentsJson = new Gson().toJson(payments);
 
-        ServletUtil.writeJsonToResponse(paymentsJson, resp);
+        servletUtil.writeJsonToResponse(paymentsJson, resp);
     }
 }

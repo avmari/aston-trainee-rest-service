@@ -21,6 +21,8 @@ public class UserChatsServlet extends HttpServlet {
 
     private final UserService userService = new UserService(UserRepository.getInstance());
     private final ChatDtoMapper chatDtoMapper = ChatDtoMapper.getInstance();
+    private final ServletUtil servletUtil = new ServletUtil();
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -28,7 +30,7 @@ public class UserChatsServlet extends HttpServlet {
         List<OutgoingChatDto> chats = userService.getUserChatsById(id).stream().map(chatDtoMapper::toDto).toList();
         String chatsJson = new Gson().toJson(chats);
 
-        ServletUtil.writeJsonToResponse(chatsJson, resp);
+        servletUtil.writeJsonToResponse(chatsJson, resp);
     }
 
     @Override
@@ -39,8 +41,6 @@ public class UserChatsServlet extends HttpServlet {
         UUID chatId = UUID.fromString(jsonData.get("chat").getAsJsonObject().get("id").getAsString());
 
         userService.saveUserChat(userId, chatId);
-
-//        ServletUtil.writeJsonToResponse(chatsJson, resp);
     }
 
 }

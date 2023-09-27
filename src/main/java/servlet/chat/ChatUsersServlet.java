@@ -7,36 +7,40 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import repository.impl.ChatRepository;
 import service.impl.ChatService;
-import servlet.dto.OutgoingChatDto;
-import servlet.mapper.ChatDtoMapper;
+import servlet.dto.OutgoingUserDto;
+import servlet.mapper.UserDtoMapper;
 import util.ServletUtil;
 
 import java.util.List;
+import java.util.UUID;
 
-@WebServlet("/chats")
-public class AllChatsServlet extends HttpServlet {
+@WebServlet("/chatUsers")
+public class ChatUsersServlet extends HttpServlet {
 
     private final ChatService chatService;
-    private final ChatDtoMapper chatDtoMapper;
+    private final UserDtoMapper userDtoMapper;
     private final ServletUtil servletUtil;
 
-    public AllChatsServlet(ChatService chatService, ChatDtoMapper chatDtoMapper, ServletUtil servletUtil) {
+
+    public ChatUsersServlet(ChatService chatService, UserDtoMapper userDtoMapper, ServletUtil servletUtil) {
         this.chatService = chatService;
-        this.chatDtoMapper = chatDtoMapper;
+        this.userDtoMapper = userDtoMapper;
         this.servletUtil = servletUtil;
     }
 
-    public AllChatsServlet() {
+    public ChatUsersServlet() {
         this.chatService = new ChatService(ChatRepository.getInstance());
-        this.chatDtoMapper = ChatDtoMapper.getInstance();
+        this.userDtoMapper = UserDtoMapper.getInstance();
         this.servletUtil = new ServletUtil();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-        List<OutgoingChatDto> chats = chatService.findAll().stream().map(chatDtoMapper::toDto).toList();
-        String chatsJson = new Gson().toJson(chats);
+        UUID id = UUID.fromString(req.getParameter("id"));
+        List<OutgoingUserDto> users = chatService.getChatUsersById(id).stream().map(userDtoMapper::toDto).toList();
+        String chatsJson = new Gson().toJson(users);
 
         servletUtil.writeJsonToResponse(chatsJson, resp);
     }
+
 }

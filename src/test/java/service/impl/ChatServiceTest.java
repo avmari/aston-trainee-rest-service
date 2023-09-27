@@ -1,6 +1,7 @@
 package service.impl;
 
 import entity.Chat;
+import entity.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -76,9 +77,29 @@ class ChatServiceTest {
         verify(chatRepository, times(1)).update(any(Chat.class));
     }
 
+    @Test
+    void getChatUsersById() {
+        List<User> expectedResult = List.of(getUser("test_user1"), getUser("test_user2"),
+                getUser("test_user3"));
+        when(chatRepository.getChatUsersById(any(UUID.class))).thenReturn(expectedResult);
+
+        List<User> actualResult = chatService.getChatUsersById(UUID.randomUUID());
+
+        assertEquals(expectedResult, actualResult);
+        verify(chatRepository, times(1)).getChatUsersById(any(UUID.class));
+    }
+
     private Chat getChat(String name) {
         Chat chat = new Chat();
         chat.setName(name);
         return chat;
+    }
+
+    private User getUser(String username) {
+        User user = new User();
+        user.setUsername(username);
+        user.setFirstName("test_first_name");
+        user.setLastName("test_last_name");
+        return user;
     }
 }

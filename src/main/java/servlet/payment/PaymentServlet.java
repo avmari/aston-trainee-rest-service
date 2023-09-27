@@ -23,6 +23,9 @@ public class PaymentServlet extends HttpServlet {
     private final PaymentService paymentService = new PaymentService(PaymentRepository.getInstance());
     private final PaymentDtoMapper paymentDtoMapper = PaymentDtoMapper.getInstance();
 
+    private final ServletUtil servletUtil = new ServletUtil();
+
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         UUID id = UUID.fromString(req.getParameter("id"));
@@ -30,7 +33,7 @@ public class PaymentServlet extends HttpServlet {
 
         if (payment.isPresent()) {
             String paymentJson = new Gson().toJson(paymentDtoMapper.toDto(payment.get()));
-            ServletUtil.writeJsonToResponse(paymentJson, resp);
+            servletUtil.writeJsonToResponse(paymentJson, resp);
         }
     }
 
@@ -44,7 +47,7 @@ public class PaymentServlet extends HttpServlet {
 
         Payment payment = paymentService.save(paymentDtoMapper.toEntity(paymentDto));
 
-        ServletUtil.writeJsonToResponse(new Gson().toJson(paymentDtoMapper.toDto(payment)), resp);
+        servletUtil.writeJsonToResponse(new Gson().toJson(paymentDtoMapper.toDto(payment)), resp);
     }
 
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {

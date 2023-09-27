@@ -1,6 +1,7 @@
 package service.impl;
 
 import entity.Chat;
+import entity.User;
 import repository.impl.ChatRepository;
 import service.Service;
 
@@ -40,4 +41,6 @@ public class ChatService implements Service<Chat> {
     public void update(Chat chat) {
         chatRepository.update(chat);
     }
+
+    public List<User> getChatUsersById(UUID id) { return chatRepository.getChatUsersById(id); }
 }

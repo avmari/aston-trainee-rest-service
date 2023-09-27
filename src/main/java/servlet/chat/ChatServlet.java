@@ -20,8 +20,22 @@ import java.util.UUID;
 @WebServlet("/chat")
 public class ChatServlet extends HttpServlet {
 
-    private final ChatService chatService = new ChatService(ChatRepository.getInstance());
-    private final ChatDtoMapper chatDtoMapper = ChatDtoMapper.getInstance();
+    private final ChatService chatService;
+    private final ChatDtoMapper chatDtoMapper;
+    private final ServletUtil servletUtil;
+
+
+    public ChatServlet(ChatService chatService, ChatDtoMapper chatDtoMapper, ServletUtil servletUtil) {
+        this.chatService = chatService;
+        this.chatDtoMapper = chatDtoMapper;
+        this.servletUtil = servletUtil;
+    }
+
+    public ChatServlet() {
+        this.chatService = new ChatService(ChatRepository.getInstance());
+        this.chatDtoMapper = ChatDtoMapper.getInstance();
+        this.servletUtil = new ServletUtil();
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -30,7 +44,7 @@ public class ChatServlet extends HttpServlet {
 
         if (chat.isPresent()) {
             String chatJson = new Gson().toJson(chatDtoMapper.toDto(chat.get()));
-            ServletUtil.writeJsonToResponse(chatJson, resp);
+            servletUtil.writeJsonToResponse(chatJson, resp);
         }
     }
     @Override
@@ -41,7 +55,7 @@ public class ChatServlet extends HttpServlet {
 
         Chat chat = chatService.save(chatDtoMapper.toEntity(chatDto));
 
-        ServletUtil.writeJsonToResponse(new Gson().toJson(chatDtoMapper.toDto(chat)), resp);
+        servletUtil.writeJsonToResponse(new Gson().toJson(chatDtoMapper.toDto(chat)), resp);
     }
 
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
