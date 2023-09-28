@@ -19,23 +19,39 @@ import java.util.UUID;
 @WebServlet("/userChats")
 public class UserChatsServlet extends HttpServlet {
 
-    private final UserService userService = new UserService(UserRepository.getInstance());
-    private final ChatDtoMapper chatDtoMapper = ChatDtoMapper.getInstance();
-    private final ServletUtil servletUtil = new ServletUtil();
+    private final UserService userService;
+    private final ChatDtoMapper chatDtoMapper;
+    private final ServletUtil servletUtil;
+    private final Gson gson;
+
+    public UserChatsServlet(UserService userService, ChatDtoMapper chatDtoMapper,
+                           ServletUtil servletUtil, Gson gson) {
+        this.userService = userService;
+        this.chatDtoMapper = chatDtoMapper;
+        this.servletUtil = servletUtil;
+        this.gson = gson;
+    }
+
+    public UserChatsServlet() {
+        this.userService = new UserService(UserRepository.getInstance());
+        this.chatDtoMapper = ChatDtoMapper.getInstance();
+        this.servletUtil = new ServletUtil();
+        this.gson = new Gson();
+    }
 
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         UUID id = UUID.fromString(req.getParameter("id"));
         List<OutgoingChatDto> chats = userService.getUserChatsById(id).stream().map(chatDtoMapper::toDto).toList();
-        String chatsJson = new Gson().toJson(chats);
+        String chatsJson = gson.toJson(chats);
 
         servletUtil.writeJsonToResponse(chatsJson, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        JsonObject jsonData = new Gson().fromJson(req.getReader(), JsonObject.class);
+        JsonObject jsonData = gson.fromJson(req.getReader(), JsonObject.class);
 
         UUID userId = UUID.fromString(jsonData.get("user").getAsJsonObject().get("id").getAsString());
         UUID chatId = UUID.fromString(jsonData.get("chat").getAsJsonObject().get("id").getAsString());

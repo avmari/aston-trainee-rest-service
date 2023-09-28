@@ -38,6 +38,6 @@ public class PaymentService implements Service<Payment> {
 
     @Override
     public void update(Payment payment) {
-
+        paymentRepository.update(payment);
     }
 }

@@ -19,12 +19,26 @@ import java.util.UUID;
 
 @WebServlet("/payment")
 public class PaymentServlet extends HttpServlet {
-    
-    private final PaymentService paymentService = new PaymentService(PaymentRepository.getInstance());
-    private final PaymentDtoMapper paymentDtoMapper = PaymentDtoMapper.getInstance();
 
-    private final ServletUtil servletUtil = new ServletUtil();
+    private final PaymentService paymentService;
+    private final PaymentDtoMapper paymentDtoMapper;
+    private final ServletUtil servletUtil;
+    private final Gson gson;
 
+    public PaymentServlet(PaymentService paymentService, PaymentDtoMapper paymentDtoMapper,
+                          ServletUtil servletUtil, Gson gson) {
+        this.paymentService = paymentService;
+        this.paymentDtoMapper = paymentDtoMapper;
+        this.servletUtil = servletUtil;
+        this.gson = gson;
+    }
+
+    public PaymentServlet() {
+        this.paymentService = new PaymentService(PaymentRepository.getInstance());
+        this.paymentDtoMapper = PaymentDtoMapper.getInstance();
+        this.servletUtil = new ServletUtil();
+        gson = new Gson();
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -32,14 +46,14 @@ public class PaymentServlet extends HttpServlet {
         Optional<Payment> payment = paymentService.findById(id);
 
         if (payment.isPresent()) {
-            String paymentJson = new Gson().toJson(paymentDtoMapper.toDto(payment.get()));
+            String paymentJson = gson.toJson(paymentDtoMapper.toDto(payment.get()));
             servletUtil.writeJsonToResponse(paymentJson, resp);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        JsonObject jsonData = new Gson().fromJson(req.getReader(), JsonObject.class);
+        JsonObject jsonData = gson.fromJson(req.getReader(), JsonObject.class);
 
         IncomingPaymentDto paymentDto = new IncomingPaymentDto();
         paymentDto.setAmount(jsonData.get("amount").getAsInt());
@@ -47,11 +61,11 @@ public class PaymentServlet extends HttpServlet {
 
         Payment payment = paymentService.save(paymentDtoMapper.toEntity(paymentDto));
 
-        servletUtil.writeJsonToResponse(new Gson().toJson(paymentDtoMapper.toDto(payment)), resp);
+        servletUtil.writeJsonToResponse(gson.toJson(paymentDtoMapper.toDto(payment)), resp);
     }
 
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        JsonObject jsonData = new Gson().fromJson(req.getReader(), JsonObject.class);
+        JsonObject jsonData = gson.fromJson(req.getReader(), JsonObject.class);
         Set<String> jsonKeys = jsonData.keySet();
 
         IncomingPaymentDto paymentDto = new IncomingPaymentDto();
@@ -66,10 +80,6 @@ public class PaymentServlet extends HttpServlet {
 
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
         UUID id = UUID.fromString(req.getParameter("id"));
-        Optional<Payment> payment = paymentService.findById(id);
-
-        if (payment.isPresent()) {
-            paymentService.deleteById(id);
-        }
+        paymentService.deleteById(id);
     }
 }

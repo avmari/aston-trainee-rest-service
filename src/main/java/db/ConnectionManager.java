@@ -6,7 +6,6 @@ import util.PropertiesUtil;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Properties;
 
 public final class ConnectionManager {
 
@@ -17,13 +16,12 @@ public final class ConnectionManager {
     private static HikariDataSource dataSource;
     private static final HikariConfig config = new HikariConfig();
 
-//    static {
-//        config.setJdbcUrl(PropertiesUtil.getProperty(URL_KEY));
-//        config.setUsername(PropertiesUtil.getProperty(USERNAME_KEY));
-//        config.setPassword(PropertiesUtil.getProperty(PASSWORD_KEY));
-//        config.setDriverClassName(org.postgresql.Driver.class.getName());
-//        dataSource = new HikariDataSource(config);
-//    }
+    static {
+        config.setJdbcUrl(PropertiesUtil.getProperty(URL_KEY));
+        config.setUsername(PropertiesUtil.getProperty(USERNAME_KEY));
+        config.setPassword(PropertiesUtil.getProperty(PASSWORD_KEY));
+        config.setDriverClassName(org.postgresql.Driver.class.getName());
+    }
 
     private ConnectionManager() {}
 
@@ -32,10 +30,12 @@ public final class ConnectionManager {
         config.setUsername(username);
         config.setPassword(password);
         config.setDriverClassName(org.postgresql.Driver.class.getName());
-        dataSource = new HikariDataSource(config);
     }
 
     public static Connection getConnection() throws SQLException {
+        if (dataSource == null) {
+            dataSource = new HikariDataSource(config);
+        }
         return dataSource.getConnection();
     }
 }

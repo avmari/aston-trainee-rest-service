@@ -16,15 +16,30 @@ import java.util.List;
 @WebServlet("/users")
 public class AllUsersServlet extends HttpServlet {
 
-    private final UserService userService = new UserService(UserRepository.getInstance());
-    private final UserDtoMapper userDtoMapper = UserDtoMapper.getInstance();
-    private final ServletUtil servletUtil = new ServletUtil();
+    private final UserService userService;
+    private final UserDtoMapper userDtoMapper;
+    private final ServletUtil servletUtil;
+    private final Gson gson;
 
+    public AllUsersServlet(UserService userService, UserDtoMapper userDtoMapper,
+                              ServletUtil servletUtil, Gson gson) {
+        this.userService = userService;
+        this.userDtoMapper = userDtoMapper;
+        this.servletUtil = servletUtil;
+        this.gson = gson;
+    }
+
+    public AllUsersServlet() {
+        this.userService = new UserService(UserRepository.getInstance());
+        this.userDtoMapper = UserDtoMapper.getInstance();
+        this.servletUtil = new ServletUtil();
+        this.gson = new Gson();
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         List<OutgoingUserDto> users = userService.findAll().stream().map(userDtoMapper::toDto).toList();
-        String usersJson = new Gson().toJson(users);
+        String usersJson = gson.toJson(users);
 
         servletUtil.writeJsonToResponse(usersJson, resp);
     }

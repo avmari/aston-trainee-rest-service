@@ -20,10 +20,25 @@ import java.util.UUID;
 
 @WebServlet("/user")
 public class UserServlet extends HttpServlet {
+    private final UserService userService;
+    private final UserDtoMapper userDtoMapper;
+    private final ServletUtil servletUtil;
+    private final Gson gson;
 
-    private final UserService userService = new UserService(UserRepository.getInstance());
-    private final UserDtoMapper userDtoMapper = UserDtoMapper.getInstance();
-    private final ServletUtil servletUtil = new ServletUtil();
+    public UserServlet(UserService userService, UserDtoMapper userDtoMapper,
+                           ServletUtil servletUtil, Gson gson) {
+        this.userService = userService;
+        this.userDtoMapper = userDtoMapper;
+        this.servletUtil = servletUtil;
+        this.gson = gson;
+    }
+
+    public UserServlet() {
+        this.userService = new UserService(UserRepository.getInstance());
+        this.userDtoMapper = UserDtoMapper.getInstance();
+        this.servletUtil = new ServletUtil();
+        this.gson = new Gson();
+    }
 
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -31,14 +46,14 @@ public class UserServlet extends HttpServlet {
         Optional<User> user = userService.findById(id);
 
         if (user.isPresent()) {
-            String userJson = new Gson().toJson(userDtoMapper.toDto(user.get()));
+            String userJson = gson.toJson(userDtoMapper.toDto(user.get()));
             servletUtil.writeJsonToResponse(userJson, resp);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        JsonObject jsonData = new Gson().fromJson(req.getReader(), JsonObject.class);
+        JsonObject jsonData = gson.fromJson(req.getReader(), JsonObject.class);
         Set<String> jsonKeys = jsonData.keySet();
 
         IncomingUserDto userDto = new IncomingUserDto();
@@ -46,15 +61,15 @@ public class UserServlet extends HttpServlet {
         if (jsonKeys.contains("firstName"))
             userDto.setFirstName(jsonData.get("firstName").getAsString());
         if (jsonKeys.contains("lastName"))
-            userDto.setFirstName(jsonData.get("lastName").getAsString());
+            userDto.setLastName(jsonData.get("lastName").getAsString());
 
         User user = userService.save(userDtoMapper.toEntity(userDto));
 
-        servletUtil.writeJsonToResponse(new Gson().toJson(userDtoMapper.toDto(user)), resp);
+        servletUtil.writeJsonToResponse(gson.toJson(userDtoMapper.toDto(user)), resp);
     }
 
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        JsonObject jsonData = new Gson().fromJson(req.getReader(), JsonObject.class);
+        JsonObject jsonData = gson.fromJson(req.getReader(), JsonObject.class);
         Set<String> jsonKeys = jsonData.keySet();
 
         IncomingUserDto userDto = new IncomingUserDto();
@@ -64,17 +79,13 @@ public class UserServlet extends HttpServlet {
         if (jsonKeys.contains("firstName"))
             userDto.setFirstName(jsonData.get("firstName").getAsString());
         if (jsonKeys.contains("lastName"))
-            userDto.setFirstName(jsonData.get("lastName").getAsString());
+            userDto.setLastName(jsonData.get("lastName").getAsString());
 
         userService.update(userDtoMapper.toEntity(userDto));
     }
 
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
         UUID id = UUID.fromString(req.getParameter("id"));
-        Optional<User> user = userService.findById(id);
-
-        if (user.isPresent()) {
-            userService.deleteById(id);
-        }
+        userService.deleteById(id);
     }
 }

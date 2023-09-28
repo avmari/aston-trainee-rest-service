@@ -1,5 +1,6 @@
 package servlet.dto;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class IncomingUserDto {
@@ -43,5 +44,17 @@ public class IncomingUserDto {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof IncomingUserDto userDto)) return false;
+        return Objects.equals(id, userDto.id) && Objects.equals(username, userDto.username) && Objects.equals(firstName, userDto.firstName) && Objects.equals(lastName, userDto.lastName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, firstName, lastName);
     }
 }

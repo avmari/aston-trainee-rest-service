@@ -79,6 +79,7 @@ class PaymentServiceTest {
 
     private Payment getPayment(UUID userId) {
         Payment payment = new Payment();
+        payment.setId(UUID.randomUUID());
         payment.setAmount(1000);
         User user = new User();
         user.setId(userId);
