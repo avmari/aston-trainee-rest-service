@@ -31,10 +31,9 @@ public class UserRepository implements CrudRepository<UUID, User> {
 
     @Override
     public Optional<User> findById(UUID id) {
-        try {
-            Connection connection = ConnectionManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM users " +
-                    "WHERE id=?");
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM users " +
+                     "WHERE id=?")) {
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 

@@ -30,10 +30,9 @@ public class ChatRepository implements CrudRepository<UUID, Chat> {
 
     @Override
     public Optional<Chat> findById(UUID id) {
-        try {
-            Connection connection = ConnectionManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM chat " +
-                    "WHERE id=?");
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM chat " +
+                     "WHERE id=?")) {
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 

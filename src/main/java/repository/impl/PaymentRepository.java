@@ -25,11 +25,10 @@ public class PaymentRepository implements CrudRepository<UUID, Payment> {
 
     @Override
     public Optional<Payment> findById(UUID id) {
-        try {
-            Connection connection = ConnectionManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM payment p " +
-                    "JOIN users u on p.user_id = u.id " +
-                    "WHERE p.id=?");
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM payment p " +
+                     "JOIN users u on p.user_id = u.id " +
+                     "WHERE p.id=?")) {
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
